@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using MedClinic.Models;
 
@@ -19,8 +21,11 @@ namespace MedClinic
             set
             {
                 selectedPatient = value;
+                filterDate = null;
+                FilterDatePicker.SelectedDate = null;
                 OnPropertyChanged(nameof(SelectedPatient));
                 OnPropertyChanged(nameof(SelectedPatientRecords));
+                OnPropertyChanged(nameof(FilteredRecords));
             }
         }
 
@@ -31,8 +36,27 @@ namespace MedClinic
             set { selectedRecord = value; OnPropertyChanged(nameof(SelectedRecord)); }
         }
 
+        private DateTime? filterDate;
+
+        // OneWay - только чтение списка приёмов
         public ObservableCollection<MedicalRecord> SelectedPatientRecords =>
             SelectedPatient?.Records ?? new ObservableCollection<MedicalRecord>();
+
+        // Фильтрованные записи
+        public IEnumerable<MedicalRecord> FilteredRecords
+        {
+            get
+            {
+                if (SelectedPatient == null)
+                    return new List<MedicalRecord>();
+
+                if (filterDate == null)
+                    return SelectedPatient.Records;
+
+                return SelectedPatient.Records
+                    .Where(r => r.Date.Date >= filterDate.Value.Date);
+            }
+        }
 
         public List<object> AllRecords
         {
@@ -102,7 +126,7 @@ namespace MedClinic
             if (win.ShowDialog() == true)
             {
                 SelectedPatient.Records.Add(win.Result);
-                OnPropertyChanged(nameof(SelectedPatientRecords));
+                OnPropertyChanged(nameof(FilteredRecords));
                 OnPropertyChanged(nameof(AllRecords));
             }
         }
@@ -117,7 +141,7 @@ namespace MedClinic
                 SelectedRecord.Description = win.Result.Description;
                 SelectedRecord.Doctor = win.Result.Doctor;
                 SelectedRecord.Date = win.Result.Date;
-                OnPropertyChanged(nameof(SelectedPatientRecords));
+                OnPropertyChanged(nameof(FilteredRecords));
                 OnPropertyChanged(nameof(AllRecords));
             }
         }
@@ -131,9 +155,22 @@ namespace MedClinic
             {
                 SelectedPatient.Records.Remove(SelectedRecord);
                 SelectedRecord = null;
-                OnPropertyChanged(nameof(SelectedPatientRecords));
+                OnPropertyChanged(nameof(FilteredRecords));
                 OnPropertyChanged(nameof(AllRecords));
             }
+        }
+
+        private void FilterDatePicker_Changed(object sender, SelectionChangedEventArgs e)
+        {
+            filterDate = FilterDatePicker.SelectedDate;
+            OnPropertyChanged(nameof(FilteredRecords));
+        }
+
+        private void ResetFilter_Click(object sender, RoutedEventArgs e)
+        {
+            filterDate = null;
+            FilterDatePicker.SelectedDate = null;
+            OnPropertyChanged(nameof(FilteredRecords));
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e) => Close();
