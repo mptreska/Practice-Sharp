@@ -1,7 +1,7 @@
 ﻿<Window x:Class="MedClinic.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Медицинские записи" Height="680" Width="980"
+        Title="Медицинские записи" Height="650" Width="950"
         Background="#EAF0FB">
 
     <Window.InputBindings>
@@ -13,7 +13,7 @@
 
     <Window.Resources>
 
-        <!-- ControlTemplate кнопки с крестом -->
+        <!-- ControlTemplate для кнопки с крестом -->
         <ControlTemplate x:Key="MedicalButtonTemplate" TargetType="Button">
             <Border Background="{TemplateBinding Background}"
                     CornerRadius="6" Padding="10,6">
@@ -43,7 +43,7 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
-        <!-- Стиль обычной кнопки -->
+        <!-- Обычный стиль кнопки -->
         <Style x:Key="DefaultButton" TargetType="Button">
             <Setter Property="Background"      Value="#4A90D9"/>
             <Setter Property="Foreground"      Value="White"/>
@@ -53,7 +53,7 @@
             <Setter Property="Margin"          Value="3"/>
         </Style>
 
-        <!-- DataTemplate для списка пациентов -->
+        <!-- DataTemplate для ListBox пациентов -->
         <DataTemplate x:Key="PatientTemplate">
             <Border Background="White" CornerRadius="6"
                     Margin="3" Padding="10"
@@ -64,13 +64,17 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Column="0" Background="#4A90D9"
-                            CornerRadius="20" Width="36" Height="36">
+                    <!-- Иконка пациента -->
+                    <Border Grid.Column="0"
+                            Background="#4A90D9"
+                            CornerRadius="20"
+                            Width="36" Height="36">
                         <TextBlock Text="👤" FontSize="18"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
                     </Border>
 
+                    <!-- Инфо -->
                     <StackPanel Grid.Column="1" Margin="10,0,0,0"
                                 VerticalAlignment="Center">
                         <TextBlock Text="{Binding FullName}"
@@ -127,20 +131,23 @@
             <Button Content="Записать пациента"
                     Command="{Binding AddPatientCommand}"
                     Template="{StaticResource MedicalButtonTemplate}"
-                    Background="#27AE60" ToolTip="Ctrl+N" Margin="5"/>
+                    Background="#27AE60"
+                    ToolTip="Ctrl+N" Margin="5"/>
             <Separator/>
             <Button Content="Добавить запись"
                     Command="{Binding AddRecordCommand}"
                     Template="{StaticResource MedicalButtonTemplate}"
-                    Background="#4A90D9" ToolTip="Ctrl+R" Margin="5"/>
-            <Button Content="✏️ Редактировать"
+                    Background="#4A90D9"
+                    ToolTip="Ctrl+R" Margin="5"/>
+            <Button Content="Редактировать"
                     Command="{Binding EditRecordCommand}"
                     Style="{StaticResource DefaultButton}"
                     ToolTip="Ctrl+E"/>
             <Button Content="🗑️ Удалить"
                     Command="{Binding DeleteRecordCommand}"
                     Style="{StaticResource DefaultButton}"
-                    Background="#E74C3C" ToolTip="Delete"/>
+                    Background="#E74C3C"
+                    ToolTip="Delete"/>
         </ToolBar>
 
         <!-- Заголовок -->
@@ -152,7 +159,7 @@
         <!-- TabControl -->
         <TabControl Grid.Row="3" Background="White" Margin="10">
 
-            <!-- Вкладка Пациенты -->
+            <!-- Вкладка 1: Пациенты -->
             <TabItem Header="  Пациенты  " FontSize="13">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -160,7 +167,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Левая панель - список пациентов -->
+                    <!-- Список пациентов с DataTemplate -->
                     <Grid Grid.Column="0" Background="#F4F8FF" Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="35"/>
@@ -168,10 +175,12 @@
                             <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Список пациентов"
+                        <TextBlock Grid.Row="0"
+                                   Text="Список пациентов"
                                    FontWeight="Bold" FontSize="13"
                                    VerticalAlignment="Center" Margin="8,0"/>
 
+                        <!-- ListBox с DataTemplate -->
                         <ListBox Grid.Row="1"
                                  ItemsSource="{Binding Patients}"
                                  SelectedItem="{Binding SelectedPatient}"
@@ -184,7 +193,8 @@
                                 Content="Записать пациента"
                                 Command="{Binding AddPatientCommand}"
                                 Template="{StaticResource MedicalButtonTemplate}"
-                                Background="#27AE60" Margin="5"/>
+                                Background="#27AE60"
+                                Margin="5"/>
                     </Grid>
 
                     <!-- Правая панель -->
@@ -193,14 +203,17 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
                         <!-- TwoWay привязка - редактирование пациента -->
-                        <Border Grid.Row="0" Background="White"
-                                BorderBrush="#CCCCCC" BorderThickness="1"
-                                CornerRadius="5" Padding="12" Margin="0,0,0,8">
+                        <Border Grid.Row="0"
+                                Background="White"
+                                BorderBrush="#CCCCCC"
+                                BorderThickness="1"
+                                CornerRadius="5"
+                                Padding="12"
+                                Margin="0,0,0,8">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="80"/>
@@ -211,63 +224,35 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0"
                                            Text="ФИО:" FontWeight="Bold"
                                            VerticalAlignment="Center"/>
-                                <!-- TwoWay привязка -->
                                 <TextBox Grid.Row="0" Grid.Column="1"
                                          Grid.ColumnSpan="3"
-                                         Text="{Binding SelectedPatient.FullName,
-                                                Mode=TwoWay,
-                                                UpdateSourceTrigger=PropertyChanged}"
+                                         Text="{Binding SelectedPatient.FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Padding="4" Margin="0,3"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0"
                                            Text="Возраст:" FontWeight="Bold"
                                            VerticalAlignment="Center"/>
-                                <!-- TwoWay привязка -->
                                 <TextBox Grid.Row="1" Grid.Column="1"
-                                         Text="{Binding SelectedPatient.Age,
-                                                Mode=TwoWay,
-                                                UpdateSourceTrigger=PropertyChanged}"
+                                         Text="{Binding SelectedPatient.Age, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Padding="4" Margin="0,3"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="2"
                                            Text="Телефон:" FontWeight="Bold"
-                                           VerticalAlignment="Center"
-                                           Margin="8,0,0,0"/>
-                                <!-- TwoWay привязка -->
+                                           VerticalAlignment="Center" Margin="8,0,0,0"/>
                                 <TextBox Grid.Row="1" Grid.Column="3"
-                                         Text="{Binding SelectedPatient.Phone,
-                                                Mode=TwoWay,
-                                                UpdateSourceTrigger=PropertyChanged}"
+                                         Text="{Binding SelectedPatient.Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Padding="4" Margin="0,3"/>
                             </Grid>
                         </Border>
 
-                        <!-- Индикатор загрузки -->
-                        <Border Grid.Row="1"
-                                Background="#FFF9E6"
-                                BorderBrush="#F39C12"
-                                BorderThickness="1"
-                                CornerRadius="5"
-                                Padding="10,6"
-                                Margin="0,0,0,8"
-                                Visibility="{Binding IsLoading,
-                                             Converter={StaticResource BoolToVisibility}}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="⏳ " FontSize="16"/>
-                                <TextBlock Text="{Binding LoadingStatus}"
-                                           FontWeight="Bold"
-                                           Foreground="#E67E22"
-                                           VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-
                         <!-- Фильтрация по дате -->
-                        <Border Grid.Row="2"
+                        <Border Grid.Row="1"
                                 Background="#F4F8FF"
                                 BorderBrush="#CCCCCC"
                                 BorderThickness="1"
@@ -279,25 +264,25 @@
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
                                            Margin="0,0,10,0"/>
-                                <DatePicker SelectedDate="{Binding FilterDate,
-                                                           Mode=TwoWay}"
+                                <DatePicker x:Name="FilterDatePicker"
+                                            SelectedDateChanged="FilterDatePicker_Changed"
                                             Width="150"/>
                                 <Button Content="Сбросить"
-                                        Command="{Binding ResetFilterCommand}"
+                                        Click="ResetFilter_Click"
                                         Style="{StaticResource DefaultButton}"
                                         Background="#95A5A6"
                                         Margin="8,0,0,0"/>
                             </StackPanel>
                         </Border>
 
-                        <TextBlock Grid.Row="3"
+                        <TextBlock Grid.Row="2"
                                    Text="История болезней"
                                    FontWeight="Bold" FontSize="13"
                                    VerticalAlignment="Center"
                                    Margin="0,0,0,4"/>
 
                         <!-- OneWay привязка для списка приёмов -->
-                        <DataGrid Grid.Row="4"
+                        <DataGrid Grid.Row="3"
                                   ItemsSource="{Binding FilteredRecords, Mode=OneWay}"
                                   SelectedItem="{Binding SelectedRecord}"
                                   AutoGenerateColumns="False"
@@ -323,7 +308,7 @@
                 </Grid>
             </TabItem>
 
-            <!-- Вкладка Все записи -->
+            <!-- Вкладка 2: Все записи -->
             <TabItem Header="  Все записи  " FontSize="13">
                 <DataGrid ItemsSource="{Binding AllRecords, Mode=OneWay}"
                           AutoGenerateColumns="False"
@@ -348,6 +333,5 @@
             </TabItem>
 
         </TabControl>
-
     </Grid>
 </Window>
