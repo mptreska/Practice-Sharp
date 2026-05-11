@@ -15,7 +15,6 @@ namespace MedClinic.ViewModels
     {
         private MedicalRecordService service = new MedicalRecordService();
 
-        // Коллекция пациентов
         public ObservableCollection<Patient> Patients { get; set; }
 
         private Patient selectedPatient;
@@ -25,6 +24,8 @@ namespace MedClinic.ViewModels
             set
             {
                 selectedPatient = value;
+                SelectedRecord = null;
+                filterDate = null;
                 OnPropertyChanged(nameof(SelectedPatient));
                 OnPropertyChanged(nameof(FilteredRecords));
                 if (selectedPatient != null)
@@ -36,10 +37,15 @@ namespace MedClinic.ViewModels
         public MedicalRecord SelectedRecord
         {
             get => selectedRecord;
-            set { selectedRecord = value; OnPropertyChanged(nameof(SelectedRecord)); }
+            set
+            {
+                selectedRecord = value;
+                OnPropertyChanged(nameof(SelectedRecord));
+                // Обновляем состояние кнопок
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
-        // Индикатор загрузки
         private bool isLoading;
         public bool IsLoading
         {
@@ -47,12 +53,11 @@ namespace MedClinic.ViewModels
             set { isLoading = value; OnPropertyChanged(nameof(IsLoading)); }
         }
 
-        // Статус загрузки
         private string loadingStatus;
         public string LoadingStatus
         {
             get => loadingStatus;
-            set { loadingStatus = value; OnPropertyChanged(nameof(loadingStatus)); }
+            set { loadingStatus = value; OnPropertyChanged(nameof(LoadingStatus)); }
         }
 
         private DateTime? filterDate;
@@ -67,7 +72,6 @@ namespace MedClinic.ViewModels
             }
         }
 
-        // OneWay - фильтрованные записи
         public IEnumerable<MedicalRecord> FilteredRecords
         {
             get
@@ -88,8 +92,8 @@ namespace MedClinic.ViewModels
             get
             {
                 var list = new List<object>();
-                foreach (Patient p in Patients)
-                    foreach (MedicalRecord r in p.Records)
+                foreach (var p in Patients)
+                    foreach (var r in p.Records)
                         list.Add(new
                         {
                             PatientName = p.FullName,
@@ -102,14 +106,12 @@ namespace MedClinic.ViewModels
             }
         }
 
-        // Команды
         public ICommand AddPatientCommand { get; }
         public ICommand AddRecordCommand { get; }
         public ICommand EditRecordCommand { get; }
         public ICommand DeleteRecordCommand { get; }
         public ICommand ResetFilterCommand { get; }
 
-        // Действия для открытия окон (задаются из View)
         public Action ShowAddPatientWindow { get; set; }
         public Action ShowAddRecordWindow { get; set; }
         public Action ShowEditRecordWindow { get; set; }
@@ -118,34 +120,35 @@ namespace MedClinic.ViewModels
         {
             Patients = new ObservableCollection<Patient>();
 
-            AddPatientCommand = new RelayCommand(_ => ShowAddPatientWindow?.Invoke());
-            AddRecordCommand = new RelayCommand(_ => ShowAddRecordWindow?.Invoke(), _ => SelectedPatient != null);
-            EditRecordCommand = new RelayCommand(_ => ShowEditRecordWindow?.Invoke(), _ => SelectedRecord != null);
-            DeleteRecordCommand = new RelayCommand(async _ => await DeleteRecordAsync(), _ => SelectedRecord != null);
-            ResetFilterCommand = new RelayCommand(_ => FilterDate = null);
+            AddPatientCommand = new RelayCommand(
+                _ => ShowAddPatientWindow?.Invoke());
 
-            LoadSamplePatients();
+            AddRecordCommand = new RelayCommand(
+                _ => ShowAddRecordWindow?.Invoke(),
+                _ => SelectedPatient != null);
+
+            EditRecordCommand = new RelayCommand(
+                _ => ShowEditRecordWindow?.Invoke(),
+                _ => SelectedRecord != null);
+
+            // Исправленная команда удаления
+            DeleteRecordCommand = new AsyncRelayCommand(
+                async _ => await DeleteRecordAsync(),
+                _ => SelectedRecord != null && SelectedPatient != null);
+
+            ResetFilterCommand = new RelayCommand(
+                _ => FilterDate = null);
         }
 
-        private void LoadSamplePatients()
-        {
-            Patients.Add(new Patient { Id = 1, FullName = "Иванов Иван Иванович", Age = 35, Phone = "89001234567" });
-            Patients.Add(new Patient { Id = 2, FullName = "Петрова Мария Сергеевна", Age = 28, Phone = "89009876543" });
-            Patients.Add(new Patient { Id = 3, FullName = "Сидоров Алексей Владимирович", Age = 45, Phone = "89007654321" });
-        }
-
-        // Асинхронная загрузка записей пациента
         public async Task LoadRecordsAsync(Patient patient)
         {
             IsLoading = true;
             LoadingStatus = "Загрузка истории болезни...";
 
             patient.Records.Clear();
-
             var records = await service.LoadRecordsAsync(patient.Id);
-
-            foreach (var record in records)
-                patient.Records.Add(record);
+            foreach (var r in records)
+                patient.Records.Add(r);
 
             IsLoading = false;
             LoadingStatus = "";
@@ -187,6 +190,7 @@ namespace MedClinic.ViewModels
 
             await service.SaveRecordAsync(updated);
 
+            // Обновляем через свойства чтобы сработал INotifyPropertyChanged
             SelectedRecord.Diagnosis = updated.Diagnosis;
             SelectedRecord.Description = updated.Description;
             SelectedRecord.Doctor = updated.Doctor;
@@ -203,23 +207,43 @@ namespace MedClinic.ViewModels
         {
             if (SelectedRecord == null || SelectedPatient == null) return;
 
-            if (MessageBox.Show($"Удалить запись '{SelectedRecord.Diagnosis}'?",
-                "Подтверждение", MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes)
-            {
-                IsLoading = true;
-                LoadingStatus = "Удаление записи...";
+            var result = MessageBox.Show(
+                $"Удалить запись '{SelectedRecord.Diagnosis}'?",
+                "Подтверждение",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
 
-                await service.DeleteRecordAsync(SelectedRecord);
-                SelectedPatient.Records.Remove(SelectedRecord);
-                SelectedRecord = null;
+            if (result != MessageBoxResult.Yes) return;
 
-                IsLoading = false;
-                LoadingStatus = "";
+            IsLoading = true;
+            LoadingStatus = "Удаление...";
 
-                OnPropertyChanged(nameof(FilteredRecords));
-                OnPropertyChanged(nameof(AllRecords));
-            }
+            await service.DeleteRecordAsync(SelectedRecord);
+
+            // Сохраняем ссылку перед обнулением
+            var recordToDelete = SelectedRecord;
+            SelectedRecord = null;
+
+            SelectedPatient.Records.Remove(recordToDelete);
+
+            IsLoading = false;
+            LoadingStatus = "";
+
+            OnPropertyChanged(nameof(FilteredRecords));
+            OnPropertyChanged(nameof(AllRecords));
+        }
+
+        public void LoadDefaultPatients()
+        {
+            var p1 = new Patient { Id = 1, FullName = "Иванов Иван Иванович", Age = 35, Phone = "89001234567" };
+            p1.Records.Add(new MedicalRecord { Diagnosis = "Грипп", Description = "Температура 38.5", Doctor = "Петров А.А.", Date = DateTime.Today.AddDays(-10) });
+            p1.Records.Add(new MedicalRecord { Diagnosis = "Ангина", Description = "Боль в горле", Doctor = "Сидоров В.В.", Date = DateTime.Today.AddDays(-5) });
+
+            var p2 = new Patient { Id = 2, FullName = "Петрова Мария Сергеевна", Age = 28, Phone = "89009876543" };
+            p2.Records.Add(new MedicalRecord { Diagnosis = "Бронхит", Description = "Кашель", Doctor = "Петров А.А.", Date = DateTime.Today.AddDays(-3) });
+
+            Patients.Add(p1);
+            Patients.Add(p2);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
