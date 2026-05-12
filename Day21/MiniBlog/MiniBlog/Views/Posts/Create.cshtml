@@ -1,0 +1,70 @@
+﻿@model MiniBlog.Models.PostViewModel
+
+@{
+    ViewData["Title"] = "Создать пост";
+}
+
+<div class="container mt-4">
+
+    <h1>✏️ Создать новый пост</h1>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-md-8">
+
+            <form asp-controller="Posts" asp-action="Create" method="post">
+
+                @Html.AntiForgeryToken()
+
+                @* Поле Заголовок *@
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-bold"></label>
+                    <input asp-for="Title"
+                           class="form-control"
+                           placeholder="Введите заголовок (от 3 до 100 символов)" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                @* Поле Автор *@
+                <div class="mb-3">
+                    <label asp-for="Author" class="form-label fw-bold"></label>
+                    <input asp-for="Author"
+                           class="form-control"
+                           placeholder="Введите имя автора (от 2 до 50 символов)" />
+                    <span asp-validation-for="Author" class="text-danger"></span>
+                </div>
+
+                @* Поле Содержимое *@
+                <div class="mb-3">
+                    <label asp-for="Content" class="form-label fw-bold"></label>
+                    <textarea asp-for="Content"
+                              class="form-control"
+                              rows="8"
+                              placeholder="Напишите текст поста (от 10 до 5000 символов)">
+                    </textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+
+                @* Кнопки *@
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">
+                        💾 Опубликовать
+                    </button>
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       class="btn btn-secondary">
+                        Отмена
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,99 @@
+﻿@{
+    ViewData["Title"] = "Главная";
+}
+
+<!-- Главный баннер -->
+<div class="py-5 mb-5 bg-dark text-white rounded-3">
+    <div class="container py-3">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-4 fw-bold">Добро пожаловать в MiniBlog</h1>
+                <p class="lead mt-3 text-secondary">
+                    Платформа для публикации и чтения постов.
+                    Делитесь своими мыслями и идеями с другими.
+                </p>
+                <div class="mt-4 d-flex gap-3">
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       class="btn btn-light btn-lg px-4">
+                        Читать посты
+                    </a>
+                    <a asp-controller="Posts"
+                       asp-action="Create"
+                       class="btn btn-outline-light btn-lg px-4">
+                        Написать пост
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Описание возможностей -->
+<div class="row g-4 mb-5">
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title fw-bold">Читайте посты</h4>
+                <p class="card-text text-muted">
+                    Просматривайте все опубликованные посты.
+                    Находите интересные материалы от разных авторов.
+                </p>
+                <a asp-controller="Posts"
+                   asp-action="Index"
+                   class="btn btn-outline-dark mt-2">
+                    Перейти к постам
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title fw-bold">Пишите посты</h4>
+                <p class="card-text text-muted">
+                    Создавайте собственные публикации.
+                    Делитесь знаниями и опытом с читателями блога.
+                </p>
+                <a asp-controller="Posts"
+                   asp-action="Create"
+                   class="btn btn-outline-dark mt-2">
+                    Создать пост
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title fw-bold">Управляйте</h4>
+                <p class="card-text text-muted">
+                    Удаляйте ненужные публикации.
+                    Следите за актуальностью материалов в блоге.
+                </p>
+                <a asp-controller="Posts"
+                   asp-action="Index"
+                   class="btn btn-outline-dark mt-2">
+                    Управление постами
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Нижний блок -->
+<div class="bg-white rounded-3 shadow-sm p-5 text-center mb-4">
+    <h2 class="fw-bold">Готовы начать?</h2>
+    <p class="text-muted mt-2">
+        Напишите свой первый пост прямо сейчас
+    </p>
+    <a asp-controller="Posts"
+       asp-action="Create"
+       class="btn btn-dark btn-lg px-5 mt-2">
+        Написать пост
+    </a>
+</div>

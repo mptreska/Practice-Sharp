@@ -1,0 +1,98 @@
+﻿@model List<MiniBlog.Models.Post>
+
+@{
+    ViewData["Title"] = "Список постов";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📝 Мини-блог</h1>
+        <a asp-controller="Posts" asp-action="Create" class="btn btn-success">
+            + Создать пост
+        </a>
+    </div>
+
+    @* TempData - показываем сообщение об успехе *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ✅ @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @* TempData - показываем сообщение об ошибке *@
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ❌ @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @* ViewBag - количество постов *@
+    <p class="text-muted">Всего постов: <strong>@ViewBag.PostCount</strong></p>
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            Постов пока нет. Создайте первый!
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var post in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+
+                            <h5 class="card-title">@post.Title</h5>
+
+                            <p class="text-muted mb-1">
+                                ✍️ Автор: <strong>@post.Author</strong>
+                            </p>
+
+                            <p class="card-text mt-2">
+                                @(post.Content.Length > 100
+                                                        ? post.Content.Substring(0, 100) + "..."
+                                                        : post.Content)
+                    </p>
+
+                            <small class="text-secondary">
+                                📅 @post.DatePosted.ToString("dd.MM.yyyy HH:mm")
+                            </small>
+
+                        </div>
+
+                        <div class="card-footer d-flex gap-2">
+
+                            <a asp-controller="Posts"
+                               asp-action="Details"
+                               asp-route-id="@post.Id"
+                               class="btn btn-primary btn-sm">
+                                Читать
+                            </a>
+
+                            @* Кнопка удаления *@
+                            <form asp-controller="Posts"
+                                  asp-action="Delete"
+                                  method="post"
+                                  onsubmit="return confirm('Удалить пост?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@post.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    🗑 Удалить
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+                }
+        </div>
+    }
+
+</div>

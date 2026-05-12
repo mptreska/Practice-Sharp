@@ -1,0 +1,60 @@
+﻿@model MiniBlog.Models.Post
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Posts" asp-action="Index">Все посты</a>
+            </li>
+            <li class="breadcrumb-item active">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow">
+        <div class="card-body">
+
+            <h1 class="card-title">@Model.Title</h1>
+
+            <hr />
+
+            <div class="d-flex gap-4 text-muted mb-3">
+                <span>✍️ Автор: <strong>@Model.Author</strong></span>
+                <span>📅 @Model.DatePosted.ToString("dd.MM.yyyy HH:mm")</span>
+            </div>
+
+            <div class="mt-4">
+                <p style="white-space: pre-wrap; font-size: 1.1em;">
+                    @Model.Content
+                </p>
+            </div>
+
+        </div>
+
+        <div class="card-footer d-flex gap-2">
+
+            <a asp-controller="Posts"
+               asp-action="Index"
+               class="btn btn-secondary">
+                ← Назад к списку
+            </a>
+
+            <form asp-controller="Posts"
+                  asp-action="Delete"
+                  method="post"
+                  onsubmit="return confirm('Удалить этот пост?')">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger">
+                    🗑 Удалить пост
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
