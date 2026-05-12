@@ -1,0 +1,123 @@
+﻿<Window x:Class="MedClinic.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Вход в систему"
+        Height="560" Width="430"
+        MinHeight="560" MinWidth="430"
+        WindowStartupLocation="CenterScreen"
+        Background="#EAF0FB"
+        ResizeMode="CanResize">
+
+    <Grid Margin="25" x:Name="MainGrid" Loaded="MainGrid_Loaded">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <StackPanel Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,20">
+            <TextBlock Text="🏥 МедКлиника"
+                       FontSize="26" FontWeight="Bold"
+                       Foreground="#2C3E50"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="Система учёта медицинских записей"
+                       FontSize="12" Foreground="#7F8C8D"
+                       HorizontalAlignment="Center"
+                       Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <TabControl Grid.Row="2" Background="White">
+
+            <!-- Вход -->
+            <TabItem Header="  Вход  ">
+                <StackPanel Margin="15">
+                    <TextBlock Text="Логин:"
+                               FontWeight="Bold" Margin="0,0,0,4"/>
+                    <TextBox x:Name="LoginBox"
+                             Padding="8,6" Margin="0,0,0,12"
+                             BorderBrush="#CCCCCC" BorderThickness="1"/>
+
+                    <TextBlock Text="Пароль:"
+                               FontWeight="Bold" Margin="0,0,0,4"/>
+                    <PasswordBox x:Name="PasswordBox"
+                                 Padding="8,6" Margin="0,0,0,20"
+                                 BorderBrush="#CCCCCC" BorderThickness="1"/>
+
+                    <TextBlock x:Name="LoginErrorText"
+                               Foreground="Red"
+                               Margin="0,0,0,10"
+                               TextWrapping="Wrap"/>
+
+                    <Button Content="Войти"
+                            Click="Login_Click"
+                            Background="#4A90D9"
+                            Foreground="White"
+                            Padding="0,10" FontSize="14"
+                            BorderThickness="0" Cursor="Hand"/>
+
+                    <TextBlock Margin="0,15,0,0"
+                               Foreground="#95A5A6"
+                               HorizontalAlignment="Center"
+                               FontSize="12">
+                        <Run Text="Врач: doctor1 / 1234"/>
+                    </TextBlock>
+                    <TextBlock Foreground="#95A5A6"
+                               HorizontalAlignment="Center"
+                               FontSize="12">
+                        <Run Text="Пациент: patient1 / 1234"/>
+                    </TextBlock>
+                </StackPanel>
+            </TabItem>
+
+            <!-- Регистрация -->
+            <TabItem Header="  Регистрация  ">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="15">
+                        <TextBlock Text="ФИО:"
+                                   FontWeight="Bold" Margin="0,0,0,4"/>
+                        <TextBox x:Name="RegFullNameBox"
+                                 Padding="8,6" Margin="0,0,0,10"
+                                 BorderBrush="#CCCCCC" BorderThickness="1"/>
+
+                        <TextBlock Text="Логин:"
+                                   FontWeight="Bold" Margin="0,0,0,4"/>
+                        <TextBox x:Name="RegLoginBox"
+                                 Padding="8,6" Margin="0,0,0,10"
+                                 BorderBrush="#CCCCCC" BorderThickness="1"/>
+
+                        <TextBlock Text="Пароль:"
+                                   FontWeight="Bold" Margin="0,0,0,4"/>
+                        <PasswordBox x:Name="RegPasswordBox"
+                                     Padding="8,6" Margin="0,0,0,10"
+                                     BorderBrush="#CCCCCC" BorderThickness="1"/>
+
+                        <TextBlock Text="Роль:"
+                                   FontWeight="Bold" Margin="0,0,0,4"/>
+                        <ComboBox x:Name="RoleComboBox"
+                                  Padding="8,4" Margin="0,0,0,15"
+                                  BorderBrush="#CCCCCC" BorderThickness="1">
+                            <ComboBoxItem Content="Врач" IsSelected="True"/>
+                            <ComboBoxItem Content="Пациент"/>
+                        </ComboBox>
+
+                        <TextBlock x:Name="RegErrorText"
+                                   Foreground="Red"
+                                   Margin="0,0,0,8"
+                                   TextWrapping="Wrap"/>
+
+                        <Button Content="Зарегистрироваться"
+                                Click="Register_Click"
+                                Background="#27AE60"
+                                Foreground="White"
+                                Padding="0,10" FontSize="13"
+                                BorderThickness="0" Cursor="Hand"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Window>
