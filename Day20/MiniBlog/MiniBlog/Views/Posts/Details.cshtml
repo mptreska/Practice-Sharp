@@ -1,0 +1,44 @@
+﻿@model MiniBlog.Models.Post
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Posts" asp-action="Index">Все посты</a>
+            </li>
+            <li class="breadcrumb-item active">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow">
+        <div class="card-body">
+
+            <h1 class="card-title">@Model.Title</h1>
+
+            <hr />
+
+            <p class="text-muted">
+                📅 Опубликовано: @Model.DatePosted.ToString("dd.MM.yyyy HH:mm")
+            </p>
+
+            <div class="mt-4">
+                <p style="white-space: pre-wrap; font-size: 1.1em;">
+                    @Model.Content
+                </p>
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+            <a asp-controller="Posts" asp-action="Index" class="btn btn-secondary">
+                ← Назад к списку
+            </a>
+        </div>
+    </div>
+
+</div>
