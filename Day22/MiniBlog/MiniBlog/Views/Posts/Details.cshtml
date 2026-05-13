@@ -1,0 +1,69 @@
+﻿@model MiniBlog.Models.Post
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Posts" asp-action="Index">Все посты</a>
+                </li>
+                <li class="breadcrumb-item active">@Model.Title</li>
+            </ol>
+        </nav>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5">
+
+                <h1 class="fw-bold mb-3">@Model.Title</h1>
+
+                <div class="d-flex gap-3 text-muted small mb-4">
+                    <span>Автор: <strong>@Model.Author</strong></span>
+                    <span>Дата: @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+
+                <hr class="mb-4" />
+
+                <p style="white-space: pre-wrap; font-size: 1.05em; line-height: 1.8;">
+                    @Model.Content
+                </p>
+
+            </div>
+
+            <div class="card-footer bg-white border-0 px-5 pb-4">
+                <div class="d-flex gap-2">
+
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Назад к списку
+                    </a>
+
+                    <a asp-controller="Posts"
+                       asp-action="Edit"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-outline-dark">
+                        Редактировать
+                    </a>
+
+                    <form asp-controller="Posts"
+                          asp-action="Delete"
+                          method="post"
+                          onsubmit="return confirm('Вы уверены что хотите удалить этот пост?')">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-danger">
+                            Удалить
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

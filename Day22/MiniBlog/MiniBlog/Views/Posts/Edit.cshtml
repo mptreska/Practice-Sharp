@@ -1,0 +1,63 @@
+﻿@model MiniBlog.Models.PostViewModel
+
+@{
+    ViewData["Title"] = "Редактировать пост";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5">
+
+                <h2 class="fw-bold mb-4">Редактировать пост</h2>
+
+                <form asp-controller="Posts" asp-action="Edit" method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    @* Скрытое поле Id - чтобы знать какой пост редактируем *@
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Author" class="form-label fw-semibold"></label>
+                        <input asp-for="Author" class="form-control" />
+                        <span asp-validation-for="Author" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Content" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Content"
+                                  class="form-control"
+                                  rows="10"></textarea>
+                        <span asp-validation-for="Content" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-dark px-4">
+                            Сохранить изменения
+                        </button>
+                        <a asp-controller="Posts"
+                           asp-action="Index"
+                           class="btn btn-outline-secondary px-4">
+                            Отмена
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

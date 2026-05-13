@@ -1,0 +1,101 @@
+﻿@model List<MiniBlog.Models.Post>
+
+@{
+    ViewData["Title"] = "Список постов";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">Все посты</h2>
+        <p class="text-muted mt-1">Всего постов: @ViewBag.PostCount</p>
+    </div>
+    <a asp-controller="Posts" asp-action="Create" class="btn btn-dark px-4">
+        Написать пост
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="text-center py-5">
+        <h4 class="text-muted">Постов пока нет</h4>
+        <p class="text-muted">Создайте первый пост</p>
+        <a asp-controller="Posts" asp-action="Create" class="btn btn-dark mt-2">
+            Написать пост
+        </a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var post in Model)
+        {
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+
+                        <h5 class="card-title fw-bold">@post.Title</h5>
+
+                        <p class="text-muted small mb-2">
+                            Автор: @post.Author &nbsp;|&nbsp;
+                            @post.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                        </p>
+
+                        <p class="card-text text-muted">
+                            @(post.Content.Length > 120
+                                                ? post.Content.Substring(0, 120) + "..."
+                                                : post.Content)
+                </p>
+
+                    </div>
+
+                    <div class="card-footer bg-white border-0 px-4 pb-4">
+                        <div class="d-flex gap-2">
+
+                            <a asp-controller="Posts"
+                               asp-action="Details"
+                               asp-route-id="@post.Id"
+                               class="btn btn-outline-dark btn-sm">
+                                Подробнее
+                            </a>
+
+                            <a asp-controller="Posts"
+                               asp-action="Edit"
+                               asp-route-id="@post.Id"
+                               class="btn btn-outline-secondary btn-sm">
+                                Редактировать
+                            </a>
+
+                            <form asp-controller="Posts"
+                                  asp-action="Delete"
+                                  method="post"
+                                  onsubmit="return confirm('Вы уверены что хотите удалить этот пост?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@post.Id" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    Удалить
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
