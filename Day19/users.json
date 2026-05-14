@@ -1,0 +1,23 @@
+[
+  {
+    "Id": 1,
+    "Username": "doctor1",
+    "Password": "1234",
+    "FullName": "Петров Алексей Иванович",
+    "Role": 0
+  },
+  {
+    "Id": 2,
+    "Username": "patient1",
+    "Password": "1234",
+    "FullName": "Иванов Иван Иванович",
+    "Role": 1
+  },
+  {
+    "Id": 3,
+    "Username": "doctor2",
+    "Password": "1234",
+    "FullName": "Сидоров Виктор Петрович",
+    "Role": 0
+  }
+]
